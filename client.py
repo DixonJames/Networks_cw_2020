@@ -11,7 +11,7 @@ send_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 send_socket.bind((local_ip, 2222))
 
 def constuctMessage(message, type):
-    return f'{len(message):<10}' + f'{type:<10}' + message
+    return (f'{len(message):<10}' + f'{type:<10}' + message).encode()
 
 
 def receiveMessage(socket):
