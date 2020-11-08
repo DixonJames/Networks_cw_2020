@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="78f885e3-a417-455a-a9f5-728ab7ce623a" name="Default Changelist" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectId" id="1jTVTntSQSKXOEmjp9INM7XOfUH" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\GIT\Networks and systems\Networks coursework" />
+      <recent name="C:\GIT\Networks and systems\Networks coursework\old" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Python.client (1)">
+    <configuration name="Unnamed" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
+      <module name="Networks coursework" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="C:\GIT\AI\AI search Coursework 2020\venv\Scripts\python.exe" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="client (1)" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="Networks coursework" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/client.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="server (1)" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="Networks coursework" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/server.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="server" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="Networks coursework" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="C:\GIT\Networks and systems\Networks coursework\old\server.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="server2 (1)" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="Networks coursework" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/old" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/old/server2.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="testing" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="Networks coursework" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/testing.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <list>
+      <item itemvalue="Python.Unnamed" />
+      <item itemvalue="Python.client (1)" />
+      <item itemvalue="Python.server (1)" />
+      <item itemvalue="Python.server2 (1)" />
+      <item itemvalue="Python.server" />
+      <item itemvalue="Python.testing" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Python.client (1)" />
+        <item itemvalue="Python.server (1)" />
+        <item itemvalue="Python.testing" />
+        <item itemvalue="Python.client (1)" />
+        <item itemvalue="Python.server2 (1)" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="78f885e3-a417-455a-a9f5-728ab7ce623a" name="Default Changelist" comment="" />
+      <created>1603828079114</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1603828079114</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="223" y="72" width="1089" height="714" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1603828094727">
+      <screen x="0" y="0" width="1536" height="834" />
+    </state>
+    <state x="223" y="72" width="1089" height="714" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1536.834/-1920.0.1920.1080@0.0.1536.834" timestamp="1603828094727" />
+    <state x="140" y="186" width="1142" height="594" key="#xdebugger.evaluate" timestamp="1604847535384">
+      <screen x="0" y="0" width="1536" height="834" />
+    </state>
+    <state x="140" y="186" width="1142" height="594" key="#xdebugger.evaluate/0.0.1536.834/-1920.0.1920.1080@0.0.1536.834" timestamp="1604847535384" />
+    <state x="942" y="150" key="#xdebugger.evaluate/0.0.1536.834@0.0.1536.834" timestamp="1603982013706" />
+    <state width="1515" height="203" key="GridCell.Tab.0.bottom" timestamp="1604848429523">
+      <screen x="0" y="0" width="1536" height="834" />
+    </state>
+    <state width="1899" height="250" key="GridCell.Tab.0.bottom/0.0.1536.834/-1920.0.1920.1080@-1920.0.1920.1080" timestamp="1604014775744" />
+    <state width="1515" height="203" key="GridCell.Tab.0.bottom/0.0.1536.834/-1920.0.1920.1080@0.0.1536.834" timestamp="1604848429523" />
+    <state width="1515" height="305" key="GridCell.Tab.0.bottom/0.0.1536.834@0.0.1536.834" timestamp="1603983474208" />
+    <state width="1515" height="203" key="GridCell.Tab.0.center" timestamp="1604848429523">
+      <screen x="0" y="0" width="1536" height="834" />
+    </state>
+    <state width="1899" height="250" key="GridCell.Tab.0.center/0.0.1536.834/-1920.0.1920.1080@-1920.0.1920.1080" timestamp="1604014775744" />
+    <state width="1515" height="203" key="GridCell.Tab.0.center/0.0.1536.834/-1920.0.1920.1080@0.0.1536.834" timestamp="1604848429523" />
+    <state width="1515" height="305" key="GridCell.Tab.0.center/0.0.1536.834@0.0.1536.834" timestamp="1603983474208" />
+    <state width="1515" height="203" key="GridCell.Tab.0.left" timestamp="1604848429523">
+      <screen x="0" y="0" width="1536" height="834" />
+    </state>
+    <state width="1899" height="250" key="GridCell.Tab.0.left/0.0.1536.834/-1920.0.1920.1080@-1920.0.1920.1080" timestamp="1604014775744" />
+    <state width="1515" height="203" key="GridCell.Tab.0.left/0.0.1536.834/-1920.0.1920.1080@0.0.1536.834" timestamp="1604848429523" />
+    <state width="1515" height="305" key="GridCell.Tab.0.left/0.0.1536.834@0.0.1536.834" timestamp="1603983474208" />
+    <state width="1515" height="203" key="GridCell.Tab.0.right" timestamp="1604848429523">
+      <screen x="0" y="0" width="1536" height="834" />
+    </state>
+    <state width="1899" height="250" key="GridCell.Tab.0.right/0.0.1536.834/-1920.0.1920.1080@-1920.0.1920.1080" timestamp="1604014775744" />
+    <state width="1515" height="203" key="GridCell.Tab.0.right/0.0.1536.834/-1920.0.1920.1080@0.0.1536.834" timestamp="1604848429523" />
+    <state width="1515" height="305" key="GridCell.Tab.0.right/0.0.1536.834@0.0.1536.834" timestamp="1603983474208" />
+    <state width="1515" height="234" key="GridCell.Tab.1.bottom" timestamp="1604847632953">
+      <screen x="0" y="0" width="1536" height="834" />
+    </state>
+    <state width="1899" height="339" key="GridCell.Tab.1.bottom/0.0.1536.834/-1920.0.1920.1080@-1920.0.1920.1080" timestamp="1604014774063" />
+    <state width="1515" height="234" key="GridCell.Tab.1.bottom/0.0.1536.834/-1920.0.1920.1080@0.0.1536.834" timestamp="1604847632953" />
+    <state width="1515" height="305" key="GridCell.Tab.1.bottom/0.0.1536.834@0.0.1536.834" timestamp="1603983474895" />
+    <state width="1515" height="234" key="GridCell.Tab.1.center" timestamp="1604847632953">
+      <screen x="0" y="0" width="1536" height="834" />
+    </state>
+    <state width="1899" height="339" key="GridCell.Tab.1.center/0.0.1536.834/-1920.0.1920.1080@-1920.0.1920.1080" timestamp="1604014774063" />
+    <state width="1515" height="234" key="GridCell.Tab.1.center/0.0.1536.834/-1920.0.1920.1080@0.0.1536.834" timestamp="1604847632953" />
+    <state width="1515" height="305" key="GridCell.Tab.1.center/0.0.1536.834@0.0.1536.834" timestamp="1603983474895" />
+    <state width="1515" height="234" key="GridCell.Tab.1.left" timestamp="1604847632953">
+      <screen x="0" y="0" width="1536" height="834" />
+    </state>
+    <state width="1899" height="339" key="GridCell.Tab.1.left/0.0.1536.834/-1920.0.1920.1080@-1920.0.1920.1080" timestamp="1604014774063" />
+    <state width="1515" height="234" key="GridCell.Tab.1.left/0.0.1536.834/-1920.0.1920.1080@0.0.1536.834" timestamp="1604847632953" />
+    <state width="1515" height="305" key="GridCell.Tab.1.left/0.0.1536.834@0.0.1536.834" timestamp="1603983474895" />
+    <state width="1515" height="234" key="GridCell.Tab.1.right" timestamp="1604847632953">
+      <screen x="0" y="0" width="1536" height="834" />
+    </state>
+    <state width="1899" height="339" key="GridCell.Tab.1.right/0.0.1536.834/-1920.0.1920.1080@-1920.0.1920.1080" timestamp="1604014774063" />
+    <state width="1515" height="234" key="GridCell.Tab.1.right/0.0.1536.834/-1920.0.1920.1080@0.0.1536.834" timestamp="1604847632953" />
+    <state width="1515" height="305" key="GridCell.Tab.1.right/0.0.1536.834@0.0.1536.834" timestamp="1603983474895" />
+    <state width="775" height="424" key="XDebugger.FullValuePopup" timestamp="1604759009618">
+      <screen x="0" y="0" width="1536" height="834" />
+    </state>
+    <state width="775" height="424" key="XDebugger.FullValuePopup/0.0.1536.834/-1920.0.1920.1080@0.0.1536.834" timestamp="1604759009618" />
+    <state x="-1557" y="0" width="1342" height="822" maximized="true" key="dock-window-1" timestamp="1604848471672">
+      <screen x="-1920" y="0" width="1920" height="1080" />
+    </state>
+    <state x="-1557" y="0" width="1342" height="822" maximized="true" key="dock-window-1/0.0.1536.834/-1920.0.1920.1080@0.0.1536.834" timestamp="1604848471672" />
+    <state x="-1362" y="89" width="1350" height="822" maximized="true" key="dock-window-2" timestamp="1604758062876">
+      <screen x="-1920" y="0" width="1920" height="1080" />
+    </state>
+    <state x="-1362" y="89" width="1350" height="822" maximized="true" key="dock-window-2/0.0.1536.834/-1920.0.1920.1080@0.0.1536.834" timestamp="1604758062876" />
+    <state x="-1117" y="325" key="refactoring.ChangeSignatureDialog" timestamp="1604250436696">
+      <screen x="-1920" y="0" width="1920" height="1080" />
+    </state>
+    <state x="-1117" y="325" key="refactoring.ChangeSignatureDialog/0.0.1536.834/-1920.0.1920.1080@0.0.1536.834" timestamp="1604250436696" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/old/server2.py</url>
+          <line>65</line>
+          <option name="timeStamp" value="11" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/client.py</url>
+          <line>89</line>
+          <option name="timeStamp" value="16" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/server.py</url>
+          <line>36</line>
+          <option name="timeStamp" value="21" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+</project>
