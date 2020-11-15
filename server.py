@@ -33,17 +33,16 @@ def receiveMessage(socket):
             if not(len(sum_message) < take_in):
                 if len(sum_message) != take_in:
                     print("oversized message received")
-                    return False
+                    return False, False, False
                 return message_type, sender, sum_message
 
     except:
-        return False
+        return False, False, False
 
 def send_message(recipients, msg, type, sender):
     msg = sender + ':' + msg
     for recipient in recipients:
         recipient.send(constuctMessage(msg, type, sender))
-
 
 
 
@@ -61,6 +60,50 @@ class room():
 
         self.client_username = {}
 
+    def sendViaType(self, message_type, recipients, message_data=None):
+        if message_type == 0:
+            for recipient in recipients:
+                send_message(recipients, message_data, message_type, message_sender)
+        elif message_type == 1:
+            pass
+        elif message_type == 2:
+            pass
+        elif message_type == 3:
+            pass
+        elif message_type == 4:
+            pass
+
+    def recipientsViaType(self, message_type, recipients, message_data=None):
+        try:
+            sender = next(key for key, value in self.client_username.items() if value == f'{message_data.split(" ")[0]}')
+        except:
+            sender = False
+        # to all
+        if message_type == 0 or message_type == 3:
+            return recipients
+
+        # to one whisperUser
+        elif message_type == 1:
+            if sender:
+                #reverse dict lookup
+                recipients = [sender]
+                return recipients
+            else:
+                return False
+
+        #command
+        elif message_type == 2:
+            # code commands in later
+            print(f"command {message_data} issued ")
+            return recipients
+
+        elif message_type == 2:
+            # code commands in later
+            print(f"command {message_data} issued ")
+            return recipients
+        else:
+            return False
+
     def monitorRoom(self):
         while True:
             r_sockets, w_sockets, e_sockets = select.select(self.all_socket_list, [], self.all_socket_list,1)
@@ -72,12 +115,15 @@ class room():
                     #accepts the new connection reqest
                     cli_socket, cli_addr = current_socket.accept()
                     current_socket = cli_socket
+
                     #brings in the message form the initial request
                     try:
                         message_type,message_sender, message_data = receiveMessage(cli_socket)
                         self.client_username[cli_socket] = message_data
 
                         self.all_socket_list.append(cli_socket)
+
+                        #send_message(cli_socket, "welcome to the server!", 1, "server")
 
                         print(f"new connection from {message_data} @ {cli_addr}")
                     except:
@@ -88,48 +134,29 @@ class room():
 
                 else:
                     message_type,message_sender, message_data = receiveMessage(current_socket)
-                    if message_data and message_type is False:
-                        print(f"user {self.client_username[self.client_username[current_socket]]} disconnected")
+
+                    #removes user if  message is False
+                    if message_data == False:
+                        print(f"user {self.client_username[current_socket]} disconnected")
 
                         self.all_socket_list.remove(current_socket)
                         del self.client_username[current_socket]
 
                         continue
 
-                    print(f"USER:{self.client_username[current_socket]}:{type_display[int(message_type)]}::  {message_data}")
+                    print(f"USER:{self.client_username[current_socket]}:{type_display[int(message_type)]}>  {message_data}")
 
-                recipients = [recipient for recipient in r_sockets if not self.room_socket or current_socket]
+                recipients = self.recipientsViaType(message_type, [recipient for recipient in r_sockets if not self.room_socket], message_data)
 
-                if message_type == 0:
-                    recipients = [recipient for recipient in r_sockets if not self.room_socket or current_socket]
-                    send_message(recipients, message_data, message_type, message_sender)
-                elif message_type == 1:
-                    recipients = [recipient for recipient in r_sockets if recipient == message_data.split(" ")[0]]
-                    send_message(recipients, message_data, message_type, message_sender)
-                elif message_type == 2:
-                    #code commands in later
-                    print(f"command {message_data} issues by {message_sender}")
-                    continue
-                else:
-                    continue
+                if recipients:
+                    if message_type == 1:
+                        send_message(recipients, message_data, message_type, message_sender)
 
-                send_message(recipients, message_data, message_type, message_sender)
+
+if __name__ == '__main__':
+    room1 = room(port)
+    room1.monitorRoom()
 
 
 
-
-
-
-
-
-room1 = room(port)
-room1.monitorRoom()
-
-
-"""
-while True:
-    cli_sock, cli_addr = send_socket.accept()
-    print(f'new member from {cli_addr}')
-    cli_sock.send((constuctMessage("hello there", 1)).encode())
-"""
 

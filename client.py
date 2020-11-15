@@ -67,7 +67,6 @@ def send_message(recipients, msg = None):
         msg = input_message()
         if msg == False:
             return False
-        print(msg)
     for recipient in recipients:
         recipient.send(msg)
 
@@ -84,7 +83,7 @@ if __name__ == '__main__':
     client_socket.connect(server)
     client_socket.setblocking(False)
 
-    username = input(">useranme>")
+    username = str(input(">useranme>"))
 
     username_msg = constuctMessage(username, type_lookup['USERNAME'], username)
     client_socket.send(username_msg)
