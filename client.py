@@ -5,11 +5,20 @@ server = ("127.0.0.1", 2222)
 listen = ("127.0.0.1", 3333)
 
 header_size = 30
-type_lookup = {'all': 0, 'whisper':1, 'command':2, 'USERNAME':3}
+
+type_lookup = {'/all':0, '/whisper':1, '/newname':2, '/quit':3, '/users':4}
+
 type_display = ['TO-ALL:', 'TO-YOU:', 'COMMAND:', "username now:"]
+command_prefixes = ['/all', '/whisper', '/newname', '/quit', '/users']
+
 log = []
 username = "Iam Afiller"
 
+def rev_dict_lookup(dict, seach_val):
+    for key, val in dict:
+        if val == seach_val:
+            return val
+    return False
 
 def constuctMessage(message, type, sender):
     return (f'{len(message):<10}' + f'{type:<10}' + f'{sender:<10}' + message).encode()
@@ -52,11 +61,12 @@ def input_message():
     if user_in == "":
         return False
     if user_in[0] == '/':
-        command = (user_in.split(' '))[0][1:]
-        try:
+        command = (user_in.split(' '))[0]
+
+        if command in command_prefixes:
             command_code = type_lookup[command]
             return constuctMessage(user_in[(len(command)+2):], command_code, username)
-        except:
+        else:
             print("INVALID COMMAND")
             return False
     else:
@@ -80,17 +90,29 @@ recv_socket.bind(listen)
 
 if __name__ == '__main__':
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    #not sure about blow line
+    client_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+
     client_socket.connect(server)
     client_socket.setblocking(False)
 
+
     username = str(input(">useranme>"))
 
-    username_msg = constuctMessage(username, type_lookup['USERNAME'], username)
+    username_msg = constuctMessage(username, 0, username)
     client_socket.send(username_msg)
 
     while True:
-        send_message([client_socket])
+
+        #need to get these two bits running in paralell
         try:
+            send_message([client_socket])
+        except:
+            print('server closed')
+            exit(1)
+
+        try:
+
             message_type, sender, message = receiveMessage(client_socket)
             display_message(message, message_type, sender)
         except:
@@ -98,12 +120,7 @@ if __name__ == '__main__':
 
 
 
-'''
-send_socket.connect((local_ip, 3334))
-fg
-type, message = receiveMessage(send_socket)
-print(message,type )
-'''
+
 
 
 
