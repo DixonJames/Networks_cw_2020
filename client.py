@@ -2,7 +2,7 @@ import socket
 
 
 server = ("127.0.0.1", 2222)
-listen = ("127.0.0.1", 3333)
+listen = ("127.0.0.1", 7777)
 
 header_size = 30
 
@@ -40,13 +40,13 @@ def receiveMessage(socket):
             else:
                 sum_message += part
 
-            if not (len(sum_message) != take_in):
+            if len(sum_message) >= take_in:
                 return message_type, sender, sum_message
 
-            else:
-                return False
+
+
     except:
-        return False
+        return False, False, False
 
 def display_message(message, type, sender):
         message = f"{sender}|{type} : {message}"
@@ -89,31 +89,37 @@ recv_socket.bind(listen)
 
 
 if __name__ == '__main__':
-    client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    #not sure about blow line
-    client_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    send_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    #send_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    send_socket.connect(server)
+    #send_socket.setblocking(False)
 
-    client_socket.connect(server)
-    client_socket.setblocking(False)
+    #listen_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    #listen_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    #listen_socket.bind(listen)
+
+    #listen_socket.listen()
+
+
 
 
     username = str(input(">useranme>"))
 
     username_msg = constuctMessage(username, 0, username)
-    client_socket.send(username_msg)
+    send_socket.send(username_msg)
 
     while True:
 
         #need to get these two bits running in paralell
         try:
-            send_message([client_socket])
+            send_message([send_socket])
         except:
             print('server closed')
             exit(1)
 
         try:
 
-            message_type, sender, message = receiveMessage(client_socket)
+            message_type, sender, message = receiveMessage(send_socket)
             display_message(message, message_type, sender)
         except:
             continue

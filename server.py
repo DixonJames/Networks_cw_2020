@@ -44,10 +44,11 @@ def receiveMessage(socket):
     except:
         return False, False, False
 
-def send_message(recipients, msg, type, sender):
-    msg = sender + ':' + msg
+def send_message(recipients, msg, type, sender, out_socket):
+    msg = sender + ': ' + msg
     for recipient in recipients:
-        recipient.send(constuctMessage(msg, type, sender))
+        recipient.sendall(constuctMessage(msg, type, sender))
+
 
 
 
@@ -56,14 +57,16 @@ class room():
         self.listen_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.listen_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.listen_socket.bind((local_ip, port))
-
         self.listen_socket.listen()
+
 
         self.room_socket = self.listen_socket
 
         self.all_socket_list = [self.listen_socket]
 
         self.client_username = {}
+
+        self.client_return_addr = {}
 
 
     def recipientsViaType(self, message_type, all_posible_recipients,sender, message_data=None ):
@@ -122,11 +125,11 @@ class room():
 
         # if mesage not a command, sends to the recipients. handles messages to all and recipients
         if message_type == 0  :
-            send_message(All_posibles_recipients, whole_msg, 0, self.client_username[sender_socket])
+            send_message(All_posibles_recipients, whole_msg, 0, self.client_username[sender_socket], self.room_socket)
 
 
         elif message_type == 1 :
-            send_message(All_posibles_recipients, whole_msg, 0, self.client_username[sender_socket])
+            send_message(All_posibles_recipients, whole_msg, 0, self.client_username[sender_socket], self.room_socket)
 
 
 
@@ -137,7 +140,7 @@ class room():
             msg = f"User {self.client_username[sender_socket].copy()} is now {newname}"
             self.client_username[sender_socket] = newname
 
-            send_message(All_posibles_recipients, msg, 0, 'SERVER')
+            send_message(All_posibles_recipients, msg, 0, 'SERVER', self.room_socket)
 
         #client does a controlled quit. all other users notified and client removed from all server lists
         elif message_type == 4:
@@ -146,11 +149,11 @@ class room():
             self.all_socket_list.remove(sender_socket)
             del self.client_username[sender_socket]
 
-            send_message(All_posibles_recipients, msg, 0, 'SERVER')
+            send_message(All_posibles_recipients, msg, 0, 'SERVER', self.room_socket)
 
         #sends list of surrent users to client 
         elif message_type == 5:
-            send_message([sender_socket], self.client_username, 0, 'SERVER')
+            send_message([sender_socket], self.client_username, 0, 'SERVER', self.room_socket)
 
 
 
@@ -170,20 +173,25 @@ class room():
                     #brings in the message form the initial request
                     try:
                         message_type,message_sender, message_data = receiveMessage(cli_socket)
+
                         self.client_username[cli_socket] = message_data
-
                         self.all_socket_list.append(cli_socket)
+                        self.client_return_addr[cli_socket] = message_sender
 
-                        #send_message(cli_socket, "welcome to the server!", 1, "server")
-
+                        send_message([cli_socket], f'WELCOME to the server {message_data}', 0, "server", self.room_socket)
 
 
                         print(f"new connection from {message_data} @ {cli_addr}")
                         message_data = f"new connection from {message_data}"
+
+
+
                     except:
                         print(f"error receiving message from: {cli_socket}")
 
-                    #send_message(cli_socket, f'WELCOME to the server {message_data}')
+
+
+
 
 
                 else:
@@ -206,7 +214,7 @@ class room():
 
 
                 #finds clients to send result of received msg to
-                recipients = self.recipientsViaType(message_type, [recipient for recipient in r_sockets if not self.room_socket],current_socket, message_data)
+                recipients = self.recipientsViaType(message_type, [[recipient] for recipient in r_sockets if not self.room_socket],current_socket, message_data)
 
 
                 self.protocolHandler(recipients, current_socket, message_data, message_type)
