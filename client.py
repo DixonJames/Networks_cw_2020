@@ -1,5 +1,5 @@
 import socket
-
+import threading
 
 server = ("127.0.0.1", 2222)
 listen = ("127.0.0.1", 7777)
@@ -83,11 +83,56 @@ def send_message(recipients, msg = None):
 
 
 
-recv_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-recv_socket.bind(listen)
 
 
 
+
+def sending(socket):
+    while True:
+
+        #need to get these two bits running in paralell
+        try:
+            send_message([send_socket])
+        except:
+            print('server closed')
+            exit(1)
+
+def receiving(send_socket):
+    while True:
+        try:
+
+            message_type, sender, message = receiveMessage(send_socket)
+            display_message(message, message_type, sender)
+        except:
+            continue
+
+
+if __name__ == '__main__':
+    send_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    send_socket.connect(server)
+
+    username = str(input(">useranme>"))
+
+    username_msg = constuctMessage(username, 0, username)
+    send_socket.send(username_msg)
+
+    while True:
+
+        # need to get these two bits running in paralell
+        try:
+            send_message([send_socket])
+        except:
+            print('server closed')
+            exit(1)
+
+        try:
+
+            message_type, sender, message = receiveMessage(send_socket)
+            display_message(message, message_type, sender)
+        except:
+            continue
+
+'''
 if __name__ == '__main__':
     send_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     #send_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -110,21 +155,16 @@ if __name__ == '__main__':
 
     while True:
 
-        #need to get these two bits running in paralell
-        try:
-            send_message([send_socket])
-        except:
-            print('server closed')
-            exit(1)
+        send_thread = threading.Thread(target=sending, args=(send_socket))
+        receive_thread = threading.Thread(target=receiving, args=(send_socket))
 
-        try:
+        send_thread.start()
+        receive_thread.start()
 
-            message_type, sender, message = receiveMessage(send_socket)
-            display_message(message, message_type, sender)
-        except:
-            continue
+        send_thread.join()
+        receive_thread.join()
 
-
+'''
 
 
 

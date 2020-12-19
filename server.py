@@ -10,6 +10,11 @@ ttype_lookup = {'/all':0, '/whisper':1, '/newname':2, '/quit':3, '/users':4}
 type_display = ['TO-ALL:', 'WHISPER:', 'CHANGE NAME REQUEST:', "REQUESTING TO QUIT", "REQUESTS LIST OF USERS"]
 command_prefixes = ['/all', '/whisper', '/newname', '/quit', '/users']
 
+class Server_err(Exception):
+    pass
+class UserDisconnectErr(Exception):
+    pass
+
 def rev_dict_lookup(dict, seach_val):
     for key, val in dict:
         if val == seach_val:
@@ -24,25 +29,27 @@ def receiveMessage(socket):
     fresh = True
     take_in = header_size
 
-    try:
-        while True:
+
+    while True:
+        try:
             part = (socket.recv(take_in)).decode()
-            if fresh:
-                take_in = int(part[0:9])
-                message_type = int(part[10:19])
-                sender = part[20:]
-                fresh = False
-            else:
-                sum_message += part
+        except:
+            return False, False, False
+        if fresh:
+            take_in = int(part[0:9])
+            message_type = int(part[10:19])
+            sender = part[20:]
+            fresh = False
+        else:
+            sum_message += part
 
-            if not(len(sum_message) < take_in):
-                if len(sum_message) != take_in:
-                    print("oversized message received")
-                    return False, False, False
-                return message_type, sender, sum_message
+        if not(len(sum_message) < take_in):
+            if len(sum_message) != take_in:
+                raise Server_err("oversized Msg received")
+            return message_type, sender, sum_message
 
-    except:
-        return False, False, False
+
+
 
 def send_message(recipients, msg, type, sender, out_socket):
     msg = sender + ': ' + msg
@@ -71,7 +78,7 @@ class room():
 
     def recipientsViaType(self, message_type, all_posible_recipients,sender, message_data=None ):
         """
-        type_lookup = {'all': 0, 'whisper':1, 'command':2, 'USERNAME':3}
+        type_lookup = {'/all':0, '/whisper':1, '/newname':2, '/quit':3, '/users':4}
         :param message_type:
         :param all_posible_recipients:
         :param message_data:
@@ -79,7 +86,7 @@ class room():
         """
 
         try:
-            sender = next(key for key, value in self.client_username.items() if value == f'{message_data.split(" ")[0]}')
+            sender = self.client_username[sender]
         except:
             sender = False
 
@@ -104,7 +111,7 @@ class room():
         if message_type == 4:
             return [sender]
 
-    def protocolHandler(self, All_posibles_recipients, sender_socket, whole_msg, message_type):
+    def commandHandler(self, All_posibles_recipients, sender_socket, whole_msg, message_type):
         """
             command_prefixes = ['/all', '/whisper', '/newname', '/quit', '/users']
 
@@ -119,8 +126,11 @@ class room():
             :param sender:
             :return:
         """
-
-        arguments = whole_msg.split(" ")
+        try:
+            arguments = whole_msg.split(" ")
+        except Exception as e:
+            raise UserDisconnectErr(f"error receiving message from: {sender_socket}") from e
+            pass
 
 
         # if mesage not a command, sends to the recipients. handles messages to all and recipients
@@ -165,6 +175,7 @@ class room():
 
             for current_socket in r_sockets:
                 if current_socket == self.room_socket:
+                    disconnect = False
 
                     #accepts the new connection reqest
                     cli_socket, cli_addr = current_socket.accept()
@@ -178,7 +189,7 @@ class room():
                         self.all_socket_list.append(cli_socket)
                         self.client_return_addr[cli_socket] = message_sender
 
-                        send_message([cli_socket], f'WELCOME to the server {message_data}', 0, "server", self.room_socket)
+                        #send_message([cli_socket], f'WELCOME to the server {message_data}', 0, "server", self.room_socket)
 
 
                         print(f"new connection from {message_data} @ {cli_addr}")
@@ -186,8 +197,8 @@ class room():
 
 
 
-                    except:
-                        print(f"error receiving message from: {cli_socket}")
+                    except Exception as e:
+                        raise Server_err(f"error receiving message from: {cli_socket}") from e
 
 
 
@@ -195,29 +206,33 @@ class room():
 
 
                 else:
-                    message_type,message_sender, message_data = receiveMessage(current_socket)
+                    try:
+                        message_type,message_sender, message_data = receiveMessage(current_socket)
 
-                    #removes user if  message is False
-                    if message_data == False:
-                        print(f"user {self.client_username[current_socket]} disconnected")
+                    except UserDisconnectErr as e:
+                        message_data = f"user {self.client_username[current_socket]} disconnected"
+                        message_type = 3
                         quiting_user = self.client_username[current_socket]
 
                         self.all_socket_list.remove(current_socket)
                         del self.client_username[current_socket]
+                        raise UserDisconnectErr(f"user {self.client_username[current_socket]} disconnected") from e
 
-                        message_type = 3
+                        disconnect = True
+
+
 
                     #otherwise the received message is valid and gets printed to server screen
 
-                    else:
+                    if not(disconnect):
                         print(f"{self.client_username[current_socket]}:{type_display[int(message_type)]}>  {message_data}")
 
 
                 #finds clients to send result of received msg to
-                recipients = self.recipientsViaType(message_type, [[recipient] for recipient in r_sockets if not self.room_socket],current_socket, message_data)
+                recipients = self.recipientsViaType(message_type, [recipient for recipient in self.all_socket_list if recipient != self.room_socket],current_socket, message_data)
 
 
-                self.protocolHandler(recipients, current_socket, message_data, message_type)
+                self.commandHandler(recipients, current_socket, message_data, message_type)
 
 
 

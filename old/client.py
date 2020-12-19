@@ -1,6 +1,7 @@
 import socket, threading, sys
 from getopt import getopt
-testmessage = '5         ' + '0         ' + 'James'
+testmessage = 'ping'
+
 def sender(address):
     while True:
         message = testmessage
