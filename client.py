@@ -6,10 +6,14 @@ listen = ("127.0.0.1", 7777)
 
 header_size = 30
 
-type_lookup = {'/all':0, '/whisper':1, '/newname':2, '/quit':3, '/users':4}
+
 
 type_display = ['TO-ALL:', 'TO-YOU:', 'COMMAND:', "username now:"]
 command_prefixes = ['/all', '/whisper', '/newname', '/quit', '/users']
+
+type_lookup = {'/all':0, '/whisper':1, '/newname':2, '/quit':3, '/users':4, '/broadcast':5}
+
+
 
 log = []
 username = "Iam Afiller"
@@ -21,7 +25,8 @@ def rev_dict_lookup(dict, seach_val):
     return False
 
 def constuctMessage(message, type, sender):
-    return (f'{len(message):<10}' + f'{type:<10}' + f'{sender:<10}' + message).encode()
+    msg = f'{len(message):<10}' + f'{type:<10}' + f'{sender:<10}' + message
+    return (msg).encode()
 
 
 def receiveMessage(socket):
@@ -43,10 +48,8 @@ def receiveMessage(socket):
             if len(sum_message) >= take_in:
                 return message_type, sender, sum_message
 
-
-
     except:
-        return False, False, False
+        pass
 
 def display_message(message, type, sender):
         message = f"{sender}|{type} : {message}"
@@ -65,7 +68,8 @@ def input_message():
 
         if command in command_prefixes:
             command_code = type_lookup[command]
-            return constuctMessage(user_in[(len(command)+2):], command_code, username)
+
+            return constuctMessage(user_in[(len(command)+1):], command_code, username)
         else:
             print("INVALID COMMAND")
             return False
@@ -87,7 +91,7 @@ def send_message(recipients, msg = None):
 
 
 
-def sending(socket):
+def continuousSending():
     while True:
 
         #need to get these two bits running in paralell
@@ -97,7 +101,7 @@ def sending(socket):
             print('server closed')
             exit(1)
 
-def receiving(send_socket):
+def continuousReceiving():
     while True:
         try:
 
@@ -116,55 +120,17 @@ if __name__ == '__main__':
     username_msg = constuctMessage(username, 0, username)
     send_socket.send(username_msg)
 
-    while True:
 
-        # need to get these two bits running in paralell
-        try:
-            send_message([send_socket])
-        except:
-            print('server closed')
-            exit(1)
+    thread_sending = threading.Thread(target= continuousSending)
+    thread_receiving = threading.Thread(target=continuousReceiving)
 
-        try:
+    thread_sending.start()
+    thread_receiving.start()
 
-            message_type, sender, message = receiveMessage(send_socket)
-            display_message(message, message_type, sender)
-        except:
-            continue
-
-'''
-if __name__ == '__main__':
-    send_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    #send_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    send_socket.connect(server)
-    #send_socket.setblocking(False)
-
-    #listen_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    #listen_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    #listen_socket.bind(listen)
-
-    #listen_socket.listen()
+    thread_sending.join()
+    thread_receiving.join()
 
 
-
-
-    username = str(input(">useranme>"))
-
-    username_msg = constuctMessage(username, 0, username)
-    send_socket.send(username_msg)
-
-    while True:
-
-        send_thread = threading.Thread(target=sending, args=(send_socket))
-        receive_thread = threading.Thread(target=receiving, args=(send_socket))
-
-        send_thread.start()
-        receive_thread.start()
-
-        send_thread.join()
-        receive_thread.join()
-
-'''
 
 
 

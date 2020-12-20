@@ -5,7 +5,7 @@ port = 2222
 
 
 header_size = 30
-ttype_lookup = {'/all':0, '/whisper':1, '/newname':2, '/quit':3, '/users':4}
+type_lookup = {'/all':0, '/whisper':1, '/newname':2, '/quit':3, '/users':4, '/broadcast':5}
 
 type_display = ['TO-ALL:', 'WHISPER:', 'CHANGE NAME REQUEST:', "REQUESTING TO QUIT", "REQUESTS LIST OF USERS"]
 command_prefixes = ['/all', '/whisper', '/newname', '/quit', '/users']
@@ -52,9 +52,12 @@ def receiveMessage(socket):
 
 
 def send_message(recipients, msg, type, sender, out_socket):
-    msg = sender + ': ' + msg
+    msg = str(sender) + ': ' + str(msg)
     for recipient in recipients:
-        recipient.sendall(constuctMessage(msg, type, sender))
+        try:
+            recipient.sendall(constuctMessage(msg, type, sender))
+        except:
+            print(f'error sending to {recipient}')
 
 
 
@@ -85,35 +88,35 @@ class room():
         :return:
         """
 
-        try:
-            sender = self.client_username[sender]
-        except:
-            sender = False
+
 
         # to all
-        if message_type == 0 or message_type == 2 or message_type == 3:
+        if message_type == 5 or message_type == 2 or message_type == 3:
             return all_posible_recipients
 
         # to one whisperUser
-        elif message_type == 1:
+        if message_type == 1:
             if sender:
                 #reverse dict lookup
-                all_posible_recipients = [rev_dict_lookup(self.client_username, message_data.split(" ")[0])]
-
-                if not(all_posible_recipients[0]):
+                try:
+                    all_posible_recipients = [rev_dict_lookup(self.client_username, message_data.split(" ")[0])]
                     return all_posible_recipients
-            else:
-                return False
+                except:
+                    #user doent exist, so tell client
+                    return None
 
-        else:
-            return False
+
 
         if message_type == 4:
             return [sender]
 
+        if message_type == 0:
+            return [r for r in all_posible_recipients if r != sender]
+
     def commandHandler(self, All_posibles_recipients, sender_socket, whole_msg, message_type):
         """
-            command_prefixes = ['/all', '/whisper', '/newname', '/quit', '/users']
+            command_prefixes = ['/all', '/whisper', '/newname', '/quit', '/users', /broadcast]
+                                {'/all':0, '/whisper':1, '/newname':2, '/quit':3, '/users':4, '/broadcast':5}
 
             messages will come in with form '/command other-args'
             splits msg up into each of these parts
@@ -129,31 +132,37 @@ class room():
         try:
             arguments = whole_msg.split(" ")
         except Exception as e:
-            raise UserDisconnectErr(f"error receiving message from: {sender_socket}") from e
+            print(f"error receiving message from: {sender_socket}")
             pass
 
 
         # if mesage not a command, sends to the recipients. handles messages to all and recipients
-        if message_type == 0  :
+        if message_type == 0 :
             send_message(All_posibles_recipients, whole_msg, 0, self.client_username[sender_socket], self.room_socket)
 
+        if message_type == 5 :
+            send_message(All_posibles_recipients, whole_msg, 5, self.client_username[sender_socket], self.room_socket)
 
+        #whisper
         elif message_type == 1 :
-            send_message(All_posibles_recipients, whole_msg, 0, self.client_username[sender_socket], self.room_socket)
+            if All_posibles_recipients == None:
+                send_message([sender_socket], 'no user by this name', 0, 'server', self.room_socket)
+            else:
+                send_message(All_posibles_recipients, whole_msg, 1, self.client_username[sender_socket], self.room_socket)
 
 
 
-        # change nickname to second arg, inform everyone
+        # change nickname to first arg, inform everyone
         elif message_type == 2:
-            newname = arguments[1]
+            newname = arguments[0]
 
-            msg = f"User {self.client_username[sender_socket].copy()} is now {newname}"
+            msg = f"User {self.client_username[sender_socket]} is now {newname}"
             self.client_username[sender_socket] = newname
 
             send_message(All_posibles_recipients, msg, 0, 'SERVER', self.room_socket)
 
         #client does a controlled quit. all other users notified and client removed from all server lists
-        elif message_type == 4:
+        elif message_type == 3:
             msg = f"user {self.client_username[sender_socket]} disconnected"
 
             self.all_socket_list.remove(sender_socket)
@@ -162,8 +171,8 @@ class room():
             send_message(All_posibles_recipients, msg, 0, 'SERVER', self.room_socket)
 
         #sends list of surrent users to client 
-        elif message_type == 5:
-            send_message([sender_socket], self.client_username, 0, 'SERVER', self.room_socket)
+        elif message_type == 4:
+            send_message([sender_socket], list(self.client_username.values()), 0, 'SERVER', self.room_socket)
 
 
 
@@ -193,32 +202,32 @@ class room():
 
 
                         print(f"new connection from {message_data} @ {cli_addr}")
-                        message_data = f"new connection from {message_data}"
+                        message_data = f"welcome to the server {message_data}"
+                        message_sender = self.room_socket
+                        message_type = 5
 
 
 
                     except Exception as e:
-                        raise Server_err(f"error receiving message from: {cli_socket}") from e
-
-
-
-
+                        raise Server_err(f"error receiving connect message from: {cli_socket}") from e
 
 
                 else:
-                    try:
-                        message_type,message_sender, message_data = receiveMessage(current_socket)
+                    message_type,message_sender, message_data = receiveMessage(current_socket)
 
-                    except UserDisconnectErr as e:
+                    if (message_type,message_sender, message_data) == (False, False, False):
+                        #messy disconnect
                         message_data = f"user {self.client_username[current_socket]} disconnected"
+                        print(message_data)
+
                         message_type = 3
                         quiting_user = self.client_username[current_socket]
 
-                        self.all_socket_list.remove(current_socket)
-                        del self.client_username[current_socket]
-                        raise UserDisconnectErr(f"user {self.client_username[current_socket]} disconnected") from e
+                        message_sender = self.room_socket
 
                         disconnect = True
+
+
 
 
 
@@ -228,11 +237,14 @@ class room():
                         print(f"{self.client_username[current_socket]}:{type_display[int(message_type)]}>  {message_data}")
 
 
+
                 #finds clients to send result of received msg to
+                #message_type, all_posible_recipients,sender, message_data=None
                 recipients = self.recipientsViaType(message_type, [recipient for recipient in self.all_socket_list if recipient != self.room_socket],current_socket, message_data)
 
 
                 self.commandHandler(recipients, current_socket, message_data, message_type)
+                disconnect = False
 
 
 
