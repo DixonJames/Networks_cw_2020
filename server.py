@@ -5,21 +5,43 @@ port = 2222
 
 
 header_size = 30
-type_lookup = {'/all':0, '/whisper':1, '/newname':2, '/quit':3, '/users':4, '/broadcast':5}
+type_lookup = {'/all':0, '/whisper':1, '/newname':2, '/quit':3, '/users':4, '/broadcast':5, 'help':6}
 
-type_display = ['TO-ALL:', 'WHISPER:', 'CHANGE NAME REQUEST:', "REQUESTING TO QUIT", "REQUESTS LIST OF USERS"]
-command_prefixes = ['/all', '/whisper', '/newname', '/quit', '/users']
+type_display = ['TO-ALL:', 'WHISPER:', 'CHANGE NAME REQUEST:', "REQUEST TO QUIT", "REQUEST LIST OF USERS", "BROADCAST TO EVERYONE", "REQUESTED LIST OF COMMANDS"]
+command_prefixes = ['/all', '/whisper', '/newname', '/quit', '/users', '/broadcast', '/help']
+
+command_description = ['sends to all OTHER users (selected by default if no \'/\' entered)', 'sends to one user '
+                                                                                             'specified user',
+                       'changes users username to a new one of users choice', 'asks server to remove user\'s socket '
+                                                                              'from the list on the server. also '
+                                                                              'closes the users client program',
+                       'send a list of all current users usernames to users client', 'sends message to ALL clients '
+                                                                                     'currently connected to server', 'displays all command and their descriptions (this!)']
+
+command_templates = ['/all -message here-', '/whisper -username- -message-', '/newname -username to chang to-', '/quit', '/users', '/broadcast -message-', '/help' ]
 
 class Server_err(Exception):
     pass
 class UserDisconnectErr(Exception):
     pass
 
+def helpString():
+    whole = ''
+
+    for c in range(len(command_prefixes)):
+
+        whole += '\n'+ 'command: ' + command_prefixes[c]
+        whole += '\n' +'template: '+ command_templates[c]
+        whole += '\n' + 'description: ' + command_description[c]
+        whole += '\n'
+    return whole
+
 def rev_dict_lookup(dict, seach_val):
-    for key, val in dict:
+    for record in dict.items():
+        key, val = record
         if val == seach_val:
-            return val
-    return False
+            return key
+    return None
 
 def constuctMessage(message, type, sender):
     return (f'{len(message):<10}' + f'{type:<10}' + f'{sender:<10}' + message).encode()
@@ -98,12 +120,11 @@ class room():
         if message_type == 1:
             if sender:
                 #reverse dict lookup
-                try:
-                    all_posible_recipients = [rev_dict_lookup(self.client_username, message_data.split(" ")[0])]
+
+                all_posible_recipients = [rev_dict_lookup(self.client_username, message_data.split(" ")[0])]
+                if all_posible_recipients != [None]:
                     return all_posible_recipients
-                except:
-                    #user doent exist, so tell client
-                    return None
+                return None
 
 
 
@@ -140,7 +161,7 @@ class room():
         if message_type == 0 :
             send_message(All_posibles_recipients, whole_msg, 0, self.client_username[sender_socket], self.room_socket)
 
-        if message_type == 5 :
+        elif message_type == 5 :
             send_message(All_posibles_recipients, whole_msg, 5, self.client_username[sender_socket], self.room_socket)
 
         #whisper
@@ -154,7 +175,9 @@ class room():
 
         # change nickname to first arg, inform everyone
         elif message_type == 2:
-            newname = arguments[0]
+            newname = ''
+            for part in arguments:
+                newname += str(part)
 
             msg = f"User {self.client_username[sender_socket]} is now {newname}"
             self.client_username[sender_socket] = newname
@@ -170,12 +193,12 @@ class room():
 
             send_message(All_posibles_recipients, msg, 0, 'SERVER', self.room_socket)
 
-        #sends list of surrent users to client 
+        #sends list of current users to client
         elif message_type == 4:
             send_message([sender_socket], list(self.client_username.values()), 0, 'SERVER', self.room_socket)
 
-
-
+        elif message_type == 6:
+            send_message([sender_socket], helpString(), 6, 'SERVER', self.room_socket)
 
     def monitorRoom(self):
         while True:

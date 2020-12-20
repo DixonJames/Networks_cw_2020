@@ -9,9 +9,8 @@ header_size = 30
 
 
 type_display = ['TO-ALL:', 'TO-YOU:', 'COMMAND:', "username now:"]
-command_prefixes = ['/all', '/whisper', '/newname', '/quit', '/users']
-
-type_lookup = {'/all':0, '/whisper':1, '/newname':2, '/quit':3, '/users':4, '/broadcast':5}
+command_prefixes = ['/all', '/whisper', '/newname', '/quit', '/users', '/broadcast', '/help']
+type_lookup = {'/all':0, '/whisper':1, '/newname':2, '/quit':3, '/users':4, '/broadcast':5, '/help':6}
 
 
 
@@ -19,9 +18,10 @@ log = []
 username = "Iam Afiller"
 
 def rev_dict_lookup(dict, seach_val):
-    for key, val in dict:
+    for record in dict.items():
+        key, val = record
         if val == seach_val:
-            return val
+            return key
     return False
 
 def constuctMessage(message, type, sender):
@@ -115,7 +115,7 @@ if __name__ == '__main__':
     send_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     send_socket.connect(server)
 
-    username = str(input(">useranme>"))
+    username = str(input(">useranme>"))[0:9]
 
     username_msg = constuctMessage(username, 0, username)
     send_socket.send(username_msg)

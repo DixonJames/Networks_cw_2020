@@ -1,49 +1,25 @@
-import unittest
+type_display = ['TO-ALL:', 'WHISPER:', 'CHANGE NAME REQUEST:', "REQUEST TO QUIT", "REQUEST LIST OF USERS", "BROADCAST TO EVERYONE", "REQUESTED LIST OF COMMANDS"]
+command_prefixes = ['/all', '/whisper', '/newname', '/quit', '/users', '/broadcast', '/help']
+
+command_description = ['sends to all OTHER users (selected by default if no \'/\' entered)', 'sends to one user '
+                                                                                             'specified user',
+                       'changes users username to a new one of users choice', 'asks server to remove user\'s socket '
+                                                                              'from the list on the server. also '
+                                                                              'closes the users client program',
+                       'send a list of all current users usernames to users client', 'sends message to ALL clients '
+                                                                                     'currently connected to server', 'displays all command and their descriptions (this!)']
+command_templates = ['/all -message here-', '/whisper -username- -message-', '/newname -username to chang to-', '/quit', '/users', '/broadcast -message-', '/help' ]
 
 
-ttype_lookup = {'/all':0, '/whisper':1, '/newname':2, '/quit':3, '/users':4}
 
-type_display = ['TO-ALL:', 'WHISPER:', 'CHANGE NAME REQUEST:', "REQUESTING TO QUIT", "REQUESTS LIST OF USERS"]
-command_prefixes = ['/all', '/whisper', '/newname', '/quit', '/users']
+def helpString():
+    whole = ''
 
-sockets = ['james', 'seb', 'baz', 'dixon']
+    for c in range(len(command_prefixes)):
 
-def recipientsViaType(message_type, all_posible_recipients, sender, message_data=None):
-    """
-    type_lookup = {'all': 0, 'whisper':1, 'command':2, 'USERNAME':3}
-    :param message_type:
-    :param all_posible_recipients:
-    :param message_data:
-    :return:
-    """
-
-    try:
-        sender = next(key for key, value in sockets.items() if value == f'{message_data.split(" ")[0]}')
-    except:
-        sender = False
-
-    # to all
-    if message_type == 0 or message_type == 2 or message_type == 3:
-        return all_posible_recipients
-
-    # to one whisperUser
-    elif message_type == 1:
-        if sender:
-            # reverse dict lookup
-            all_posible_recipients = [rev_dict_lookup(self.client_username, message_data.split(" ")[0])]
-
-            if not (all_posible_recipients[0]):
-                return all_posible_recipients
-        else:
-            return False
-
-    else:
-        return False
-
-    if message_type == 4:
-        return [sender]
-
-message_type = 1
-sender = 'james'
-
-recipients = recipientsViaType(message_type, [[recipient] for recipient in sockets if not sender],current_socket, message_data)
+        whole += '\n'+ 'command: ' + command_prefixes[c]
+        whole += '\n' +'template: '+ command_templates[c]
+        whole += '\n' + 'description: ' + command_description[c]
+        whole += '\n'
+    return whole
+print(helpString())
