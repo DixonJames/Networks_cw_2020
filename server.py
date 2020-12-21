@@ -1,5 +1,5 @@
 import socket, select
-
+import re
 local_ip = '127.0.0.1'
 port = 2222
 
@@ -176,11 +176,24 @@ class room():
         # change nickname to first arg, inform everyone
         elif message_type == 2:
             newname = ''
+            fresh = True
             for part in arguments:
-                newname += str(part)
+                if fresh:
+                    newname += str(part)
+                else:
+                    newname += ' ' + str(part)
+                fresh = False
 
-            msg = f"User {self.client_username[sender_socket]} is now {newname}"
-            self.client_username[sender_socket] = newname
+            if newname == '':
+                msg = 'must enter a valid name'
+            elif newname not in self.client_username.values():
+                newname = newname[0:min(len(newname), 9)]
+                msg = f"User {self.client_username[sender_socket]} is now {newname}"
+                self.client_username[sender_socket] = newname
+
+
+            else:
+                msg = f"Username {newname} is already taken"
 
             send_message(All_posibles_recipients, msg, 0, 'SERVER', self.room_socket)
 
