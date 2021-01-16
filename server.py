@@ -1,4 +1,5 @@
 import socket, select
+from time import gmtime, strftime
 import re
 local_ip = '127.0.0.1'
 port = 2222
@@ -100,6 +101,8 @@ class room():
 
         self.client_return_addr = {}
 
+        self.room_log = []
+
 
     def recipientsViaType(self, message_type, all_posible_recipients,sender, message_data=None ):
         """
@@ -169,7 +172,7 @@ class room():
             if All_posibles_recipients == None:
                 send_message([sender_socket], 'no user by this name', 0, 'server', self.room_socket)
             else:
-                send_message(All_posibles_recipients, whole_msg, 1, self.client_username[sender_socket], self.room_socket)
+                send_message(All_posibles_recipients, whole_msg.split(' ', 1)[1], 1, self.client_username[sender_socket], self.room_socket)
 
 
 
@@ -238,6 +241,9 @@ class room():
 
 
                         print(f"new connection from {message_data} @ {cli_addr}")
+
+                        current_time = strftime("%Y-%m-%d %H:%M:%S", gmtime())
+                        self.room_log.append(f"{current_time} :: new connection from {message_data} @ {cli_addr}")
                         message_data = f"welcome to the server {message_data}"
                         message_sender = self.room_socket
                         message_type = 5
@@ -245,6 +251,8 @@ class room():
 
 
                     except Exception as e:
+                        current_time = strftime("%Y-%m-%d %H:%M:%S", gmtime())
+                        self.room_log.append(f"{current_time} :: error receiving connect message from: {cli_socket}")
                         raise Server_err(f"error receiving connect message from: {cli_socket}") from e
 
 
@@ -255,6 +263,9 @@ class room():
                         #messy disconnect
                         message_data = f"user {self.client_username[current_socket]} disconnected"
                         print(message_data)
+
+                        current_time = strftime("%Y-%m-%d %H:%M:%S", gmtime())
+                        self.room_log.append(f"{current_time} :: {message_data}")
 
                         message_type = 3
                         quiting_user = self.client_username[current_socket]
@@ -272,12 +283,18 @@ class room():
                     if not(disconnect):
                         print(f"{self.client_username[current_socket]}:{type_display[int(message_type)]}>  {message_data}")
 
+                        current_time = strftime("%Y-%m-%d %H:%M:%S", gmtime())
+                        self.room_log.append(f"{current_time} :: {self.client_username[current_socket]}:{type_display[int(message_type)]}>  {message_data}")
+
+
 
 
                 #finds clients to send result of received msg to
                 #message_type, all_posible_recipients,sender, message_data=None
                 recipients = self.recipientsViaType(message_type, [recipient for recipient in self.all_socket_list if recipient != self.room_socket],current_socket, message_data)
 
+                current_time = strftime("%Y-%m-%d %H:%M:%S", gmtime())
+                self.room_log.append(f"{current_time} :: {type_display[message_type]} : {message_sender} : {message_data}")
 
                 self.commandHandler(recipients, current_socket, message_data, message_type)
                 disconnect = False

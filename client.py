@@ -8,7 +8,8 @@ header_size = 30
 
 
 
-type_display = ['TO-ALL:', 'TO-YOU:', 'COMMAND:', "username now:"]
+type_display = ['TO-ALL:', 'WHISPER:', 'CHANGE NAME REQUEST:', "REQUEST TO QUIT", "REQUEST LIST OF USERS", "BROADCAST TO EVERYONE", "REQUESTED LIST OF COMMANDS"]
+
 command_prefixes = ['/all', '/whisper', '/newname', '/quit', '/users', '/broadcast', '/help']
 type_lookup = {'/all':0, '/whisper':1, '/newname':2, '/quit':3, '/users':4, '/broadcast':5, '/help':6}
 
@@ -52,9 +53,10 @@ def receiveMessage(socket):
         pass
 
 def display_message(message, type, sender):
-        message = f"{sender}|{type} : {message}"
+        message = f"{type_display[int(type)]} : {message}"
         log.append(message)
         print(message)
+        print(">>")
 
 
 
@@ -111,11 +113,17 @@ def continuousReceiving():
             continue
 
 
+def valid_username(useranme):
+    while(" " in useranme):
+        useranme = str(input(">please enter a username without a space>"))[0:9]
+    return useranme
+
 if __name__ == '__main__':
     send_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     send_socket.connect(server)
 
     username = str(input(">useranme>"))[0:9]
+    username = valid_username(username)
 
     username_msg = constuctMessage(username, 0, username)
     send_socket.send(username_msg)
