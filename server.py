@@ -1,6 +1,8 @@
-import socket, select
+import socket
+import select
 import sys
 import logging
+
 logging.basicConfig(filename='server.log', filemode='w', format='%(asctime)s - %(levelname)s - %(message)s', level=logging.INFO)
 
 local_ip = '127.0.0.1'
@@ -23,15 +25,22 @@ command_description = ['sends to all OTHER users (selected by default if no \'/\
 
 command_templates = ['/all -message here-', '/whisper -username- -message-', '/newname -username to chang to-', '/quit', '/users', '/broadcast -message-', '/help' ]
 
+
+#exeption classes to deal with errors
 class Server_err(Exception):
     pass
 class UserDisconnectErr(Exception):
     pass
 class UnknownProtocolErr(Exception):
     pass
+class IncorrectArguments(Exception):
+    pass
 
 
 def helpString():
+    """
+    constructs the help string to be sent to the user
+    """
     whole = ''
 
     for c in range(len(command_prefixes)):
@@ -43,6 +52,9 @@ def helpString():
     return whole
 
 def rev_dict_lookup(dict, seach_val):
+    """
+    does a reverse dict lookup
+    """
     for record in dict.items():
         key, val = record
         if val == seach_val:
@@ -50,9 +62,20 @@ def rev_dict_lookup(dict, seach_val):
     return None
 
 def constuctMessage(message, type, sender):
+    """
+    :param message: msg content
+    :param type: message type
+    :param sender: entity sendinf the message
+    :return: puts message header and message content together with correct white spacing and order
+    """
     return (f'{len(message):<10}' + f'{type:<10}' + f'{sender:<10}' + message).encode()
 
 def receiveMessage(socket):
+    """
+    takes in header and then rest of message dynamicaly depending on header contents
+    :param socket: socket to receive message from
+    :return: deconstructed message and header data
+    """
     sum_message = ''
     fresh = True
     take_in = header_size
@@ -61,8 +84,12 @@ def receiveMessage(socket):
     while True:
         try:
             part = (socket.recv(take_in)).decode()
+            if part == '' and fresh:
+                return False, False, False
         except:
+            logging.error(f"error receiving message from {socket}")
             return False, False, False
+
         if fresh:
             take_in = int(part[0:9])
             message_type = int(part[10:19])
@@ -76,7 +103,10 @@ def receiveMessage(socket):
                 raise UnknownProtocolErr("oversized Msg received")
             return message_type, sender, sum_message
 
-def send_message(recipients, msg, type, sender, out_socket):
+def send_message(recipients, msg, type, sender):
+    """
+    sends the msg to each recipient in the recipients list
+    """
     msg = str(sender) + ': ' + str(msg)
     for recipient in recipients:
         try:
@@ -86,6 +116,7 @@ def send_message(recipients, msg, type, sender, out_socket):
             #raise Server_err(f'error sending to {recipient}') from e
 
 class room():
+
     def __init__(self, port):
         self.listen_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.listen_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -105,11 +136,8 @@ class room():
 
     def recipientsViaType(self, message_type, all_posible_recipients,sender, message_data=None ):
         """
-        type_lookup = {'/all':0, '/whisper':1, '/newname':2, '/quit':3, '/users':4}
-        :param message_type:
-        :param all_posible_recipients:
-        :param message_data:
-        :return:
+        works out who should receive the message based off the type of message and who sent it
+        :return: list of users sockets
         """
 
 
@@ -138,18 +166,7 @@ class room():
 
     def commandHandler(self, All_posibles_recipients, sender_socket, whole_msg, message_type):
         """
-            command_prefixes = ['/all', '/whisper', '/newname', '/quit', '/users', /broadcast]
-                                {'/all':0, '/whisper':1, '/newname':2, '/quit':3, '/users':4, '/broadcast':5}
-
-            messages will come in with form '/command other-args'
-            splits msg up into each of these parts
-
-            first argumsnt will deffine main direction for command, what will then dictate how rest of
-            arguments used
-            :param recipients:
-            :param msg:
-            :param type:
-            :param sender:
+            depending on the message type (ie what command being requested) will perfrom command specifics here
             :return:
         """
         try:
@@ -221,7 +238,12 @@ class room():
             send_message([sender_socket], helpString(), 6, 'SERVER', self.room_socket)
 
     def monitorRoom(self):
-
+        """
+        the infinite loop that constantly goes through the list of sockets
+        checks for new users to add to sockets list
+        checks for disconnected users
+        checks if current users have sent a new message
+        """
         while True:
             r_sockets, w_sockets, e_sockets = select.select(self.all_socket_list, [], self.all_socket_list,1)
 
@@ -319,7 +341,16 @@ class room():
 
 
 
+
 if __name__ == '__main__':
+    if len(sys.argv) > 2:
+        raise IncorrectArguments(f"program called with {len(sys.argv)} arguments. Should be max of 2")
+
+    if len(sys.argv) > 1:
+        port = int(sys.argv[1])
+
+    #if no port specified will default to port 2222
+
     room1 = room(port)
     room1.monitorRoom()
 
