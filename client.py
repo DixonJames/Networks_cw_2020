@@ -1,5 +1,6 @@
 import socket
 import threading
+import sys
 
 server = ("127.0.0.1", 2222)
 listen = ("127.0.0.1", 7777)
@@ -8,7 +9,7 @@ header_size = 30
 
 
 
-type_display = ['TO-ALL:', 'WHISPER:', 'CHANGE NAME REQUEST:', "REQUEST TO QUIT", "REQUEST LIST OF USERS", "BROADCAST TO EVERYONE", "REQUESTED LIST OF COMMANDS"]
+type_display = ['TO-ALL:', 'WHISPER:', 'CHANGE NAME REQUEST:', "REQUEST TO QUIT", "REQUEST LIST OF USERS", "BROADCAST TO EVERYONE", "REQUESTED LIST OF COMMANDS", "ANNOUNCEMENT"]
 
 command_prefixes = ['/all', '/whisper', '/newname', '/quit', '/users', '/broadcast', '/help']
 type_lookup = {'/all':0, '/whisper':1, '/newname':2, '/quit':3, '/users':4, '/broadcast':5, '/help':6}

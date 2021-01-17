@@ -1,6 +1,8 @@
 import socket, select
-from time import gmtime, strftime
-import re
+import sys
+import logging
+logging.basicConfig(filename='server.log', filemode='w', format='%(asctime)s - %(levelname)s - %(message)s', level=logging.INFO)
+
 local_ip = '127.0.0.1'
 port = 2222
 
@@ -8,7 +10,7 @@ port = 2222
 header_size = 30
 type_lookup = {'/all':0, '/whisper':1, '/newname':2, '/quit':3, '/users':4, '/broadcast':5, 'help':6}
 
-type_display = ['TO-ALL:', 'WHISPER:', 'CHANGE NAME REQUEST:', "REQUEST TO QUIT", "REQUEST LIST OF USERS", "BROADCAST TO EVERYONE", "REQUESTED LIST OF COMMANDS"]
+type_display = ['TO-ALL:', 'WHISPER:', 'CHANGE NAME REQUEST:', "REQUEST TO QUIT", "REQUEST LIST OF USERS", "BROADCAST TO EVERYONE", "REQUESTED LIST OF COMMANDS", "ANNOUNCEMENT"]
 command_prefixes = ['/all', '/whisper', '/newname', '/quit', '/users', '/broadcast', '/help']
 
 command_description = ['sends to all OTHER users (selected by default if no \'/\' entered)', 'sends to one user '
@@ -25,6 +27,9 @@ class Server_err(Exception):
     pass
 class UserDisconnectErr(Exception):
     pass
+class UnknownProtocolErr(Exception):
+    pass
+
 
 def helpString():
     whole = ''
@@ -68,22 +73,17 @@ def receiveMessage(socket):
 
         if not(len(sum_message) < take_in):
             if len(sum_message) != take_in:
-                raise Server_err("oversized Msg received")
+                raise UnknownProtocolErr("oversized Msg received")
             return message_type, sender, sum_message
-
-
-
 
 def send_message(recipients, msg, type, sender, out_socket):
     msg = str(sender) + ': ' + str(msg)
     for recipient in recipients:
         try:
             recipient.sendall(constuctMessage(msg, type, sender))
-        except:
+        except Exception as e:
             print(f'error sending to {recipient}')
-
-
-
+            #raise Server_err(f'error sending to {recipient}') from e
 
 class room():
     def __init__(self, port):
@@ -101,7 +101,6 @@ class room():
 
         self.client_return_addr = {}
 
-        self.room_log = []
 
 
     def recipientsViaType(self, message_type, all_posible_recipients,sender, message_data=None ):
@@ -116,7 +115,7 @@ class room():
 
 
         # to all
-        if message_type == 5 or message_type == 2 or message_type == 3:
+        if message_type == 5 or message_type == 2 or message_type == 3 :
             return all_posible_recipients
 
         # to one whisperUser
@@ -134,7 +133,7 @@ class room():
         if message_type == 4:
             return [sender]
 
-        if message_type == 0:
+        if message_type == 0 or message_type == 7:
             return [r for r in all_posible_recipients if r != sender]
 
     def commandHandler(self, All_posibles_recipients, sender_socket, whole_msg, message_type):
@@ -209,6 +208,11 @@ class room():
 
             send_message(All_posibles_recipients, msg, 0, 'SERVER', self.room_socket)
 
+        elif message_type == 7:
+            msg = f"{self.client_username[sender_socket]} has joined"
+
+            send_message(All_posibles_recipients, msg, 0, 'SERVER', self.room_socket)
+
         #sends list of current users to client
         elif message_type == 4:
             send_message([sender_socket], list(self.client_username.values()), 0, 'SERVER', self.room_socket)
@@ -217,6 +221,7 @@ class room():
             send_message([sender_socket], helpString(), 6, 'SERVER', self.room_socket)
 
     def monitorRoom(self):
+
         while True:
             r_sockets, w_sockets, e_sockets = select.select(self.all_socket_list, [], self.all_socket_list,1)
 
@@ -242,18 +247,28 @@ class room():
 
                         print(f"new connection from {message_data} @ {cli_addr}")
 
-                        current_time = strftime("%Y-%m-%d %H:%M:%S", gmtime())
-                        self.room_log.append(f"{current_time} :: new connection from {message_data} @ {cli_addr}")
-                        message_data = f"welcome to the server {message_data}"
+
+                        logging.info(f"new connection from {message_data} @ {cli_addr}")
+
+                        message = f"welcome to the server {message_data}"
                         message_sender = self.room_socket
                         message_type = 5
+                        send_message([cli_socket], message, 5, 'SERVER',self.room_socket)
+
+                        message_data = f"{message_data} has joined"
+                        message_type = 7
 
 
 
                     except Exception as e:
-                        current_time = strftime("%Y-%m-%d %H:%M:%S", gmtime())
-                        self.room_log.append(f"{current_time} :: error receiving connect message from: {cli_socket}")
-                        raise Server_err(f"error receiving connect message from: {cli_socket}") from e
+
+
+                        logging.error(f"error receiving connect message from: {cli_socket}")
+
+                        error_msg = f"error receiving connect message from: {cli_socket}"
+                        self.all_socket_list = []
+                        self.client_username = []
+                        raise Server_err(error_msg) from e
 
 
                 else:
@@ -264,8 +279,9 @@ class room():
                         message_data = f"user {self.client_username[current_socket]} disconnected"
                         print(message_data)
 
-                        current_time = strftime("%Y-%m-%d %H:%M:%S", gmtime())
-                        self.room_log.append(f"{current_time} :: {message_data}")
+
+
+                        logging.info(f"{message_data}")
 
                         message_type = 3
                         quiting_user = self.client_username[current_socket]
@@ -283,9 +299,9 @@ class room():
                     if not(disconnect):
                         print(f"{self.client_username[current_socket]}:{type_display[int(message_type)]}>  {message_data}")
 
-                        current_time = strftime("%Y-%m-%d %H:%M:%S", gmtime())
-                        self.room_log.append(f"{current_time} :: {self.client_username[current_socket]}:{type_display[int(message_type)]}>  {message_data}")
 
+
+                        logging.info(f"{self.client_username[current_socket]}:{type_display[int(message_type)]}>  {message_data}")
 
 
 
@@ -293,8 +309,9 @@ class room():
                 #message_type, all_posible_recipients,sender, message_data=None
                 recipients = self.recipientsViaType(message_type, [recipient for recipient in self.all_socket_list if recipient != self.room_socket],current_socket, message_data)
 
-                current_time = strftime("%Y-%m-%d %H:%M:%S", gmtime())
-                self.room_log.append(f"{current_time} :: {type_display[message_type]} : {message_sender} : {message_data}")
+
+
+                #logging.info(f"{type_display[message_type]} : {message_sender} : {message_data}")
 
                 self.commandHandler(recipients, current_socket, message_data, message_type)
                 disconnect = False
