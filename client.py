@@ -2,6 +2,8 @@ import socket
 import threading
 import sys
 
+server = ("127.0.0.1", 2222)
+listen = ("127.0.0.1", 7777)
 
 header_size = 30
 
@@ -13,13 +15,11 @@ command_prefixes = ['/all', '/whisper', '/newname', '/quit', '/users', '/broadca
 type_lookup = {'/all':0, '/whisper':1, '/newname':2, '/quit':3, '/users':4, '/broadcast':5, '/help':6}
 
 
-
 #exeption classes to deal with errors
 class Server_err(Exception):
     pass
 class IncorrectArguments(Exception):
     pass
-
 
 
 def rev_dict_lookup(dict, seach_val):
@@ -37,21 +37,21 @@ def rev_dict_lookup(dict, seach_val):
 
 def constuctMessage(message, type, sender):
     """
-    :param message: msg content
-    :param type: message type
-    :param sender: entity sendinf the message
-    :return: puts message header and message content together with correct white spacing and order
-    """
+        :param message: msg content
+        :param type: message type
+        :param sender: entity sendinf the message
+        :return: puts message header and message content together with correct white spacing and order
+        """
     msg = f'{len(message):<10}' + f'{type:<10}' + f'{sender:<10}' + message
     return (msg).encode()
 
 
 def receiveMessage(socket):
     """
-    takes in header and then rest of message dynamicaly depending on header contents
-    :param socket: socket to receive message from
-    :return: deconstructed message and header data
-    """
+        takes in header and then rest of message dynamicaly depending on header contents
+        :param socket: socket to receive message from
+        :return: deconstructed message and header data
+        """
     sum_message = ''
     fresh = True
     take_in = header_size
@@ -73,7 +73,7 @@ def receiveMessage(socket):
     except:
         pass
 
-def display_message(message, type):
+def display_message(message, type, sender):
     """
     displays the input message on the terminal in a human understandable format
     """
@@ -83,7 +83,7 @@ def display_message(message, type):
 
 
 
-def input_message():
+def input_message(sem = None):
     """
     takes command or message in from user
     also validates if entered commands are valid
@@ -98,6 +98,8 @@ def input_message():
 
         if command in command_prefixes:
             command_code = type_lookup[command]
+            if command_code == 3 and sem != None:
+                sem.acquire()
 
             return constuctMessage(user_in[(len(command)+1):], command_code, username)
         else:
@@ -106,12 +108,12 @@ def input_message():
     else:
         return constuctMessage(user_in, 0, username)
 
-def send_message(recipients, msg = None):
+def send_message(recipients, msg = None, sem = None):
     """
-    sends the msg to each recipient in the recipients list
-    """
+        sends the msg to each recipient in the recipients list
+        """
     if msg == None:
-        msg = input_message()
+        msg = input_message(sem)
         if msg == False:
             return False
     for recipient in recipients:
@@ -126,40 +128,45 @@ def send_message(recipients, msg = None):
 
 def continuousSending():
     """
-    will send messages until there is no longer a connection to the server
-    :return:
-    """
-    while True:
-        try:
-            send_message([send_socket])
-        except:
-            print('server closed')
-            exit(1)
+        will send messages until there is no longer a connection to the server
+        :return:
+        """
+    pool_sema = threading.BoundedSemaphore(value=1)
 
-def continuousReceiving():
+    thread_receiving = threading.Thread(target=continuousReceiving, args=[pool_sema])
+    thread_receiving.start()
+
+    while pool_sema._value:
+
+
+        try:
+            send_message([send_socket], sem = pool_sema)
+        except:
+            pool_sema.acquire()
+            print('server closed')
+
+
+    thread_receiving.join()
+
+def continuousReceiving(sem):
     """
-    continuously takes in and displayed messages sent to it
-    :return:
-    """
-    while True:
+        continuously takes in and displayed messages sent to it
+        :return:
+        """
+    while sem._value == 1:
         try:
 
             message_type, sender, message = receiveMessage(send_socket)
             display_message(message, message_type, sender)
         except:
             continue
+    quit(1)
 
 
-def valid_username(username):
-    """
-    validates weather a username is valid (no spaces)
-    user will be prompted to enter again untill it is valid
-    :param username: username to check
-    :return:
-    """
-    while(" " in username):
-        username = str(input(">please enter a username without a space>"))[0:9]
-    return username
+def valid_username(useranme):
+    while(" " in useranme):
+        useranme = str(input(">please enter a username without a space>"))[0:9]
+    return useranme
 
 
 def validate_arguments():
@@ -180,35 +187,24 @@ def validate_arguments():
     return server, username
 
 if __name__ == '__main__':
-    """
-    ckecking command line argumn
-    """
-
-    server, username = validate_arguments()
-
-    #tries to connect to user specified server
     send_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    try:
-        send_socket.connect(server)
-    except Exception as e:
-        raise Server_err(f"could not connect to {server}") from e
+    send_socket.connect(server)
 
-
-    #validating useraname
+    username = str(input(">useranme>"))[0:9]
     username = valid_username(username)
-    #sending server the new useranme
+
     username_msg = constuctMessage(username, 0, username)
     send_socket.send(username_msg)
 
-    #setting up and starting sending and receiving threads
+
     thread_sending = threading.Thread(target= continuousSending)
-    thread_receiving = threading.Thread(target=continuousReceiving)
+
 
     thread_sending.start()
-    thread_receiving.start()
+
 
     thread_sending.join()
-    thread_receiving.join()
+
 
 
 

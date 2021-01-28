@@ -1,8 +1,6 @@
-import socket
-import select
+import socket, select
 import sys
 import logging
-
 logging.basicConfig(filename='server.log', filemode='w', format='%(asctime)s - %(levelname)s - %(message)s', level=logging.INFO)
 
 local_ip = '127.0.0.1'
@@ -103,7 +101,7 @@ def receiveMessage(socket):
                 raise UnknownProtocolErr("oversized Msg received")
             return message_type, sender, sum_message
 
-def send_message(recipients, msg, type, sender):
+def send_message(recipients, msg, type, sender, sender_socket):
     """
     sends the msg to each recipient in the recipients list
     """
@@ -349,11 +347,5 @@ if __name__ == '__main__':
     if len(sys.argv) > 1:
         port = int(sys.argv[1])
 
-    #if no port specified will default to port 2222
-
-    room1 = room(port)
-    room1.monitorRoom()
-
-
-
-
+    chatroom = room(port)
+    chatroom.monitorRoom()
