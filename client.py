@@ -188,9 +188,13 @@ def validate_arguments():
 
 if __name__ == '__main__':
     send_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    send_socket.connect(server)
+    server, username = validate_arguments()
+    try:
+        send_socket.connect(server)
+    except Exception as e:
+        raise Server_err(f"IP or port {server} input does not lead to a currently running server") from e
 
-    username = str(input(">useranme>"))[0:9]
+    #username = str(input(">useranme>"))[0:9]
     username = valid_username(username)
 
     username_msg = constuctMessage(username, 0, username)

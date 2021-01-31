@@ -342,7 +342,7 @@ class room():
 
 if __name__ == '__main__':
     if len(sys.argv) > 2:
-        raise IncorrectArguments(f"program called with {len(sys.argv)} arguments. Should be max of 2")
+        raise IncorrectArguments(f"program called with {len(sys.argv)} arguments. Should be max of 2 (server.py [port])")
 
     if len(sys.argv) > 1:
         port = int(sys.argv[1])

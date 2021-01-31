@@ -1,17 +1,17 @@
-2021-01-28 20:02:13,032 - INFO - new connection from james @ ('127.0.0.1', 63332)
-2021-01-28 20:02:27,819 - INFO - james:REQUEST LIST OF USERS>  
-2021-01-28 20:02:37,741 - INFO - james:REQUEST TO QUIT>  
-2021-01-28 20:02:47,637 - INFO - new connection from james @ ('127.0.0.1', 63338)
-2021-01-28 20:03:18,949 - ERROR - error receiving message from <socket.socket fd=324, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 2222), raddr=('127.0.0.1', 63338)>
-2021-01-28 20:03:18,950 - INFO - user james disconnected
-2021-01-28 20:03:23,838 - INFO - new connection from james @ ('127.0.0.1', 63344)
-2021-01-28 20:03:30,829 - INFO - james:REQUEST TO QUIT>  
-2021-01-28 20:03:42,241 - INFO - new connection from james @ ('127.0.0.1', 63345)
-2021-01-28 20:03:46,134 - INFO - james:REQUEST TO QUIT>  
-2021-01-28 20:03:55,089 - INFO - new connection from james @ ('127.0.0.1', 63348)
-2021-01-28 20:03:56,843 - INFO - james:REQUEST LIST OF USERS>  
-2021-01-28 20:04:06,224 - INFO - james:CHANGE NAME REQUEST:>  jiim
-2021-01-28 20:04:10,590 - INFO - jiim:REQUEST LIST OF USERS>  
-2021-01-28 20:04:15,315 - INFO - jiim:REQUESTED LIST OF COMMANDS>  
-2021-01-28 20:04:16,328 - INFO - jiim:TO-ALL:>  d
-2021-01-28 20:04:21,682 - INFO - jiim:REQUEST TO QUIT>  
+2021-01-31 20:08:25,315 - INFO - new connection from james @ ('127.0.0.1', 53283)
+2021-01-31 20:08:28,525 - INFO - james:TO-ALL:>  hello there
+2021-01-31 20:08:32,574 - INFO - james:TO-ALL:>  this is the final test
+2021-01-31 20:09:04,803 - INFO - new connection from seb @ ('127.0.0.1', 53285)
+2021-01-31 20:09:12,489 - INFO - seb:REQUEST LIST OF USERS>  
+2021-01-31 20:09:41,176 - INFO - seb:WHISPER:>  jme whats up
+2021-01-31 20:09:46,215 - INFO - seb:WHISPER:>  james whats up
+2021-01-31 20:09:57,919 - INFO - seb:CHANGE NAME REQUEST:>  jim
+2021-01-31 20:10:03,384 - INFO - jim:CHANGE NAME REQUEST:>  seb
+2021-01-31 20:10:05,882 - INFO - seb:REQUEST LIST OF USERS>  
+2021-01-31 20:10:08,961 - ERROR - error receiving message from <socket.socket fd=368, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 2223), raddr=('127.0.0.1', 53285)>
+2021-01-31 20:10:08,962 - INFO - user seb disconnected
+2021-01-31 20:10:17,852 - INFO - james:REQUEST LIST OF USERS>  
+2021-01-31 20:10:58,941 - INFO - new connection from seb @ ('127.0.0.1', 53296)
+2021-01-31 20:11:01,389 - INFO - seb:REQUEST TO QUIT>  
+2021-01-31 20:11:12,309 - ERROR - error receiving message from <socket.socket fd=364, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 2223), raddr=('127.0.0.1', 53283)>
+2021-01-31 20:11:12,309 - INFO - user james disconnected

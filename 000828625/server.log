@@ -1,0 +1,18 @@
+2021-01-31 19:26:41,572 - INFO - new connection from GRIEVOUS @ ('127.0.0.1', 53136)
+2021-01-31 19:27:23,284 - INFO - new connection from OBI-WAN @ ('127.0.0.1', 53138)
+2021-01-31 19:28:01,614 - INFO - OBI-WAN:TO-ALL:>  Hello, there!
+2021-01-31 19:28:41,458 - INFO - GRIEVOUS:TO-ALL:>  General Kenobi, you are a bold one. I find your behavior bewildering . . . Surely you realize you're doomed
+2021-01-31 19:30:17,523 - INFO - new connection from droid_1 @ ('127.0.0.1', 53141)
+2021-01-31 19:30:37,682 - INFO - new connection from droid_2 @ ('127.0.0.1', 53142)
+2021-01-31 19:31:21,387 - INFO - GRIEVOUS:WHISPER:>  droid_1 Get him!
+2021-01-31 19:31:35,587 - INFO - OBI-WAN:REQUEST LIST OF USERS>  
+2021-01-31 19:31:53,337 - INFO - droid_1:BROADCAST TO EVERYONE>  ROGER ROGER
+2021-01-31 19:32:16,314 - INFO - droid_2:REQUEST TO QUIT>  
+2021-01-31 19:32:33,882 - INFO - droid_1:REQUESTED LIST OF COMMANDS>  
+2021-01-31 19:33:46,623 - INFO - droid_1:CHANGE NAME REQUEST:>  droidParts
+2021-01-31 19:34:00,466 - INFO - droidPart:REQUEST TO QUIT>  
+2021-01-31 19:34:26,925 - INFO - GRIEVOUS:TO-ALL:>  Back away. I will deal with this Jedi slime myself.
+2021-01-31 19:34:42,944 - INFO - OBI-WAN:TO-ALL:>  Your move.
+2021-01-31 19:35:03,261 - INFO - GRIEVOUS:TO-ALL:>  You fool. I have been trained in your Jedi arts by Count Dooku himself. Attack, Kenobi.
+2021-01-31 19:35:06,413 - INFO - GRIEVOUS:REQUEST TO QUIT>  
+2021-01-31 19:35:09,767 - INFO - OBI-WAN:REQUEST TO QUIT>  

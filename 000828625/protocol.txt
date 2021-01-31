@@ -1,0 +1,51 @@
+All types of messages that can be sent and any input they require:
+Each message consists of a 30-byte header and a data section of arbitrary length. The header is split into 3 parts: the size of the data section; the sender’s username; and the message type code.
+When receiving a message, the server first takes in 30 bytes (the fixed size of the header). It then decodes and parse the header and then takes in the remaining bytes (specified in the header) that will be the data section of arbitrary length. The server now has all the information about the message (where the message can be of any sensible length).
+Depending on the message type and the content of the message the server will perform a series of methods and send out messages to clients appropriately (detailed description for each message type below)
+There are two main types of messages. Commands and a pure text message. A pure text message involves Typing anything but  a ‘/’ at the beginning and pressing enter and will result in the text being sent to all other users. This is the /all command which is selected by default if no other command selected. 
+All other commands, messages and how clients can send them are detailed below:
+
+command: /all
+template: /all -message here-
+description: sends message to all OTHER users (selected by default if no '/' entered)
+response: none to this user
+
+command: /whisper
+template: /whisper -username- -message-
+description: sends to one user specified user.
+response: if there is no user by specified name: >> “TO-ALL: : server: no user by this name “ sent to client.
+there is no response to sending user if there is a user by specified name.
+
+command: /newname
+template: /newname -username to change to-
+description: changes users’ username to a new one of user’s choice
+response: is there is already a user by specified new name: >> ”TO-ALL: : SERVER: Username x  is already taken” is sent to the client. a message is also sent out to all other users indicating the change of name.
+
+command: /quit
+template: /quit
+description: asks server to remove user's socket from the list on the server. also closes the user’s client program.
+response: sends message to all other users saying that the sending user has disconnected.
+
+command: /users
+template: /users
+description: send a list of all current user’s usernames to users’ client.
+response: a list of all currently connected users’ usernames: >> “TO-ALL: : SERVER: [‘user1’, ‘user2’]” sent to client.
+
+
+command: /broadcast
+template: /broadcast -message-
+description: sends message to ALL clients currently connected to server.
+response: every connected client will receive back the message sent out. 
+
+command: /help
+template: /help
+description: displays all command and their descriptions. 
+response: a summary of all possible commands
+
+
+Which messages can be sent by the server and which by the client? 
+All types of messages can be sent by the client; however, they only go to the server, that then causes the server to send the result of the client’s message onto any of the other clients if necessary.
+
+2-5 sentences explaining your design choices:
+Threading has been used in the client as the client needed to send and receive messages simultaneously and not have either one of these blocking the other. Select.select was used in the server as looping through each of the clients (that could be added or removed at any time) was much more elegant to implement, rather than having a thread for every client. As this would have involved difficult communication between threads.
+
